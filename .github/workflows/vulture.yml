@@ -36,7 +36,11 @@
                 --exclude 'venv/*' \
                 --exclude 'tests/*' \
                 --exclude 'installs/*' \
-                > vulture_report.txt
+                > vulture_report.txt || {
+                  echo " Vulture detected unused code! Check vulture_report.txt for details."
+                  cat vulture_report.txt
+                  exit 3
+                }
     
           # Fail if the report is non‑empty
           - name: Check for dead code
