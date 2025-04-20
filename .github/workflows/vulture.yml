@@ -28,16 +28,17 @@
               python -m pip install --upgrade pip
               pip install vulture
     
-          - name: Run Vulture dead‑code scan
+          - name: Run Vulture dead-code scan
             run: |
-              vulture . \
+              python -W "ignore" -m vulture . \
                 --min-confidence 60 \
-                --exclude '.git/*' \
-                --exclude 'venv/*' \
-                --exclude 'tests/*' \
-                --exclude 'installs/*' \
+                --exclude 'venv/**' \
+                --exclude '.git/**' \
+                --exclude 'tests/**' \
+                --exclude 'installs/**' \
+                --exclude '**/__pycache__/**' \
                 > vulture_report.txt || {
-                  echo " Vulture detected unused code! Check vulture_report.txt for details."
+                  echo "::error::Vulture found unused code!"
                   cat vulture_report.txt
                   exit 3
                 }
