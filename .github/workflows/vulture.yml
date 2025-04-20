@@ -26,18 +26,19 @@
           - name: Install dependencies
             run: |
               python -m pip install --upgrade pip
-              pip install vulture
+              pip install "docopt>=0.6.3" vulture
     
           - name: Run Vulture dead-code scan
             run: |
-              python -W "ignore" -m vulture . \
-                --min-confidence 60 \
-                --exclude 'venv/**' \
-                --exclude '.git/**' \
-                --exclude 'tests/**' \
-                --exclude 'installs/**' \
-                --exclude '**/__pycache__/**' \
-                > vulture_report.txt || {
+              python -X dev -W ignore -m vulture . \
+              --min-confidence 60 \
+              --exclude 'venv/**' \
+              --exclude '.git/**' \
+              --exclude 'tests/**' \
+              --exclude 'installs/**' \
+              --exclude '**/__pycache__/**' \
+              --exclude '**/site-packages/**' \
+              > vulture_report.txt || true{
                   echo "::error::Vulture found unused code!"
                   cat vulture_report.txt
                   exit 3
@@ -46,7 +47,7 @@
           # Fail if the report is non‑empty
           - name: Check for dead code
             run: |
-              if [[ -s vulture_report.txt ]]; then
+              if grep -q "[^[:space:]]" vulture_report.txt; then
                 echo "::error::Dead code detected:"
                 cat vulture_report.txt
                 exit 1
