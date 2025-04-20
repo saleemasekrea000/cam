@@ -8,7 +8,7 @@ TARGET_DIR="."
 MIN_CONF=60
 OUTFILE="metrics/vulture_report.txt"
 
-> "${OUTFILE}"
+: "${OUTFILE}"
 
 echo "Scanning Python dead code in ${TARGET_DIR} (confidence ≥ ${MIN_CONF})..."
 
@@ -18,6 +18,6 @@ python -W "ignore::SyntaxWarning" -m vulture "${TARGET_DIR}" \
   --exclude '**/site-packages/**' \
   --exclude '**/__pycache__/**' \
   --exclude '.git/**' \
-  > "${OUTFILE}" || true  # Don't fail on finding dead code
+  >> "${OUTFILE}" || true  # Don't fail on finding dead code
 
 echo "Vulture scan completed. See ${OUTFILE} for results."
