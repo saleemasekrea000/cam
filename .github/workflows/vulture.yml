@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: Copyright (c) 2021-2025 Yegor Bugayenko
+# SPDX-License-Identifier: MIT
+---
+    name: vulture
+    
+    on:
+      push:
+        branches:
+          - master
+      pull_request:
+        branches:
+          - master
+    
+    jobs:
+      vulture:
+        name: Dead‑Code Detection (Vulture)
+        runs-on: ubuntu-24.04
+        timeout-minutes: 15
+        steps:
+          - uses: actions/checkout@v4
+    
+          - uses: actions/setup-python@v5
+            with:
+              python-version: 3.11
+    
+          - name: Install dependencies
+            run: |
+              python -m pip install --upgrade pip
+              pip install vulture
+    
+          - name: Run Vulture dead‑code scan
+            run: |
+              vulture . \
+                --min-confidence 90 \
+                --exclude '.git/*' \
+                --exclude 'venv/*' \
+                --exclude 'tests/*' \
+                --exclude 'installs/*' \
+                > vulture_report.txt
+    
+          # Fail if the report is non‑empty
+          - name: Check for dead code
+            run: |
+              if [[ -s vulture_report.txt ]]; then
+                echo "::error::Dead code detected:"
+                cat vulture_report.txt
+                exit 1
+              else
+                echo "No dead code found by Vulture."
+              fi
+    
