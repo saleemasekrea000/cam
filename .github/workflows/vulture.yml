@@ -30,10 +30,24 @@ jobs:
 
       - name: Run Vulture scan
         run: |
-          # Make metrics directory if it doesn't exist
-          mkdir -p metrics
-          chmod +x metrics/vulture
-          ./metrics/vulture
+          set +e
+          python -X dev -W ignore -m vulture . \
+            --min-confidence 60 \
+            --exclude 'venv/**' \
+            --exclude '.git/**' \
+            --exclude 'tests/**' \
+            --exclude 'installs/**' \
+            --exclude '**/__pycache__/**' \
+            --exclude '**/site-packages/**' \
+            > vulture_report.txt
+          vulture_exit=$?
+          
+          if [ $vulture_exit -ne 0 ]; then
+            echo "::error::Vulture found unused code!"
+            cat vulture_report.txt
+            exit 3
+          fi
+          set -e
 
       - name: Check report
         run: |
