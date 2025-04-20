@@ -6,7 +6,7 @@ set -euo pipefail
 
 TARGET_DIR="."
 
-MIN_CONF=90
+MIN_CONF=60
 
 OUTFILE="metrics/vulture_report.txt"
 

@@ -13,7 +13,7 @@
     
     jobs:
       vulture:
-        name: Dead‑Code Detection (Vulture)
+        name: Dead‑Code Detection
         runs-on: ubuntu-24.04
         timeout-minutes: 15
         steps:
@@ -31,7 +31,7 @@
           - name: Run Vulture dead‑code scan
             run: |
               vulture . \
-                --min-confidence 90 \
+                --min-confidence 60 \
                 --exclude '.git/*' \
                 --exclude 'venv/*' \
                 --exclude 'tests/*' \
